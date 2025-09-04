@@ -1,0 +1,450 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Create Account - DocVerify</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% tailwind_css %}
+    <style>
+        :root {
+            --color-primary: #1B5E20;
+            --color-secondary: #2E7D32;
+            --color-tertiary: #388E3C;
+            --color-light: #4CAF50;
+            --color-accent: #66BB6A;
+            --color-bg-main: #F1F8E9;
+            --color-bg-secondary: #E8F5E8;
+            --color-text-primary: #1B5E20;
+            --color-text-secondary: #2E7D32;
+            --color-white: #FFFFFF;
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 50%, var(--color-tertiary) 100%);
+        }
+        
+        .gradient-light {
+            background: linear-gradient(135deg, var(--color-bg-main) 0%, var(--color-bg-secondary) 100%);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--color-secondary), var(--color-tertiary));
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--color-tertiary), var(--color-light));
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(46, 125, 50, 0.4);
+        }
+        
+        .btn-secondary {
+            border: 2px solid var(--color-secondary);
+            color: var(--color-secondary);
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--color-secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .shadow-elegant {
+            box-shadow: 0 10px 40px rgba(27, 94, 32, 0.12);
+        }
+        
+        .input-focus:focus {
+            border-color: var(--color-secondary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .password-strength {
+            height: 3px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .strength-weak { background-color: #ef4444; width: 25%; }
+        .strength-medium { background-color: #f59e0b; width: 50%; }
+        .strength-good { background-color: #10b981; width: 75%; }
+        .strength-strong { background-color: #059669; width: 100%; }
+    </style>
+</head>
+
+<body class="gradient-light min-h-screen">
+    <!-- Navigation -->
+    <nav class="glass-effect shadow-elegant">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center py-3">
+                <a href="/" class="flex items-center">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl mr-2 sm:mr-3 flex items-center justify-center shadow-elegant gradient-primary">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10.5,11.5C10.5,12.3 11.2,13 12,13C12.8,13 13.5,12.3 13.5,11.5S12.8,10 12,10S10.5,10.7 10.5,11.5M12,15C10.3,15 9,16.3 9,18H15C15,16.3 13.7,15 12,15Z"/>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-xl sm:text-2xl" style="color: var(--color-text-primary);">DocVerify</span>
+                </a>
+                
+                <div class="flex items-center">
+                    <a href="login.html" class="px-3 sm:px-4 py-2 rounded-xl font-medium btn-secondary text-sm">
+                        Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex items-center justify-center min-h-screen py-4 px-4 sm:px-6">
+        <div class="max-w-md w-full space-y-3">
+            <!-- Header -->
+            <div class="text-center">
+                <div class="animate-float">
+                    <div class="w-16 h-16 rounded-3xl mx-auto mb-3 flex items-center justify-center shadow-elegant gradient-primary">
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15,14C12.33,14 7,15.33 7,18V20H23V18C23,15.33 17.67,14 15,14M6,10V7H4V10H1V12H4V15H6V12H9V10M15,12A4,4 0 0,0 19,8A4,4 0 0,0 15,4A4,4 0 0,0 11,8A4,4 0 0,0 15,12Z"/>
+                        </svg>
+                    </div>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold" style="color: var(--color-text-primary);">Create Account</h2>
+                <p class="mt-2 text-base text-gray-600">Join thousands securing their documents</p>
+            </div>
+
+            <!-- Registration Form -->
+            <form class="bg-white p-6 sm:p-7 rounded-3xl shadow-elegant" id="registerForm">
+                <div class="space-y-4">
+                    <div>
+                        <label for="username" class="block text-sm font-semibold mb-2" style="color: var(--color-text-primary);">
+                            Username
+                        </label>
+                        <input 
+                            id="username" 
+                            name="username" 
+                            type="text" 
+                            required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none input-focus transition duration-300"
+                            placeholder="Choose a unique username"
+                        >
+                        <p class="mt-1 text-xs text-gray-500">Your unique identifier</p>
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block text-sm font-semibold mb-2" style="color: var(--color-text-primary);">
+                            Email Address
+                        </label>
+                        <input 
+                            id="email" 
+                            name="email" 
+                            type="email" 
+                            required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none input-focus transition duration-300"
+                            placeholder="Enter your email address"
+                        >
+                    </div>
+                    
+                    <div>
+                        <label for="password" class="block text-sm font-semibold mb-2" style="color: var(--color-text-primary);">
+                            Password
+                        </label>
+                        <input 
+                            id="password" 
+                            name="password" 
+                            type="password" 
+                            required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none input-focus transition duration-300"
+                            placeholder="Create a strong password"
+                        >
+                        <!-- Password Strength Indicator -->
+                        <div class="mt-2">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-500">Strength</span>
+                                <span id="strengthText" class="text-gray-500">Weak</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1">
+                                <div id="strengthBar" class="password-strength strength-weak"></div>
+                            </div>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">8+ characters with letters and numbers</p>
+                    </div>
+                    
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-semibold mb-2" style="color: var(--color-text-primary);">
+                            Confirm Password
+                        </label>
+                        <input 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            type="password" 
+                            required 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none input-focus transition duration-300"
+                            placeholder="Confirm your password"
+                        >
+                        <div id="passwordMatch" class="mt-1 text-xs hidden">
+                            <span class="text-red-500">❌ Passwords don't match</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-start mt-4">
+                    <input 
+                        id="terms" 
+                        name="terms" 
+                        type="checkbox" 
+                        required
+                        class="h-4 w-4 mt-0.5 rounded focus:ring-2 focus:ring-green-500"
+                        style="color: var(--color-secondary);"
+                    >
+                    <label for="terms" class="ml-2 block text-xs text-gray-700 leading-4">
+                        I agree to the 
+                        <a href="#" class="font-medium hover:underline" style="color: var(--color-secondary);">Terms</a> 
+                        and 
+                        <a href="#" class="font-medium hover:underline" style="color: var(--color-secondary);">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <!-- Newsletter Subscription -->
+                <div class="flex items-start mt-3">
+                    <input 
+                        id="newsletter" 
+                        name="newsletter" 
+                        type="checkbox" 
+                        class="h-4 w-4 mt-0.5 rounded focus:ring-2 focus:ring-green-500"
+                        style="color: var(--color-secondary);"
+                    >
+                    <label for="newsletter" class="ml-2 block text-xs text-gray-700 leading-4">
+                        Subscribe for updates and security tips
+                    </label>
+                </div>
+
+                <div class="mt-5 mb-5">
+                    <button 
+                        type="submit" 
+                        class="w-full py-3 px-4 rounded-xl font-semibold btn-primary transform hover:scale-105 transition duration-300"
+                        id="submitBtn"
+                        disabled
+                    >
+                        🚀 Create My Account
+                    </button>
+                </div>
+
+                <!-- Divider -->
+                <div class="relative my-4">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-3 bg-white text-gray-500">Or sign up with</span>
+                    </div>
+                </div>
+
+                <!-- Social Registration -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <button 
+                        type="button" 
+                        class="flex justify-center items-center px-3 py-2 border-2 border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition duration-300 text-sm"
+                    >
+                        <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Google
+                    </button>
+                    <button 
+                        type="button" 
+                        class="flex justify-center items-center px-3 py-2 border-2 border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-gray-50 transition duration-300 text-sm"
+                    >
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                        Facebook
+                    </button>
+                </div>
+
+                <!-- Sign In Link -->
+                <div class="text-center">
+                    <p class="text-gray-600 text-sm">
+                        Already have an account? 
+                        <a href="login.html" class="font-semibold hover:underline" style="color: var(--color-secondary);">
+                            Sign in here
+                        </a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('registerForm');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+        const passwordMatch = document.getElementById('passwordMatch');
+        const submitBtn = document.getElementById('submitBtn');
+        const termsCheckbox = document.getElementById('terms');
+
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            const checks = {
+                length: password.length >= 8,
+                lowercase: /[a-z]/.test(password),
+                uppercase: /[A-Z]/.test(password),
+                numbers: /\d/.test(password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+            };
+
+            strength = Object.values(checks).filter(Boolean).length;
+
+            return {
+                score: strength,
+                checks: checks
+            };
+        }
+
+        // Update password strength indicator
+        password.addEventListener('input', function() {
+            const result = checkPasswordStrength(this.value);
+            const score = result.score;
+
+            strengthBar.className = 'password-strength';
+            
+            if (score <= 2) {
+                strengthBar.classList.add('strength-weak');
+                strengthText.textContent = 'Weak';
+                strengthText.className = 'text-red-500';
+            } else if (score === 3) {
+                strengthBar.classList.add('strength-medium');
+                strengthText.textContent = 'Medium';
+                strengthText.className = 'text-yellow-500';
+            } else if (score === 4) {
+                strengthBar.classList.add('strength-good');
+                strengthText.textContent = 'Good';
+                strengthText.className = 'text-green-500';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                strengthText.textContent = 'Strong';
+                strengthText.className = 'text-green-600';
+            }
+
+            checkFormValidity();
+        });
+
+        // Check password match
+        function checkPasswordMatch() {
+            if (confirmPassword.value && password.value !== confirmPassword.value) {
+                passwordMatch.classList.remove('hidden');
+                passwordMatch.innerHTML = '<span class="text-red-500">❌ Passwords don\'t match</span>';
+                return false;
+            } else if (confirmPassword.value && password.value === confirmPassword.value) {
+                passwordMatch.classList.remove('hidden');
+                passwordMatch.innerHTML = '<span class="text-green-500">✅ Passwords match</span>';
+                return true;
+            } else {
+                passwordMatch.classList.add('hidden');
+                return false;
+            }
+        }
+
+        confirmPassword.addEventListener('input', checkPasswordMatch);
+        password.addEventListener('input', checkPasswordMatch);
+
+        // Check form validity
+        function checkFormValidity() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const passwordValue = password.value;
+            const confirmPasswordValue = confirmPassword.value;
+            const termsAccepted = termsCheckbox.checked;
+
+            const isValid = username && 
+                           email && 
+                           passwordValue && 
+                           confirmPasswordValue && 
+                           passwordValue === confirmPasswordValue &&
+                           checkPasswordStrength(passwordValue).score >= 3 &&
+                           termsAccepted;
+
+            submitBtn.disabled = !isValid;
+            
+            if (isValid) {
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+            } else {
+                submitBtn.style.opacity = '0.6';
+                submitBtn.style.cursor = 'not-allowed';
+            }
+        }
+
+        // Add event listeners to all form fields
+        ['username', 'email'].forEach(id => {
+            document.getElementById(id).addEventListener('input', checkFormValidity);
+        });
+        termsCheckbox.addEventListener('change', checkFormValidity);
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: password.value,
+                newsletter: document.getElementById('newsletter').checked
+            };
+            
+            if (!submitBtn.disabled) {
+                // Here you would normally send the data to your backend
+                alert('Account created successfully! Welcome to DocVerify!');
+                // window.location.href = '/dashboard';
+            }
+        });
+
+        // Social registration handlers
+        document.querySelectorAll('button[type="button"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const provider = this.textContent.trim();
+                alert(`${provider} registration would be implemented here!`);
+            });
+        });
+
+        // Real-time validation styling
+        const inputs = document.querySelectorAll('input[required]');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    this.style.borderColor = '#ef4444';
+                } else {
+                    this.style.borderColor = '#d1d5db';
+                }
+            });
+        });
+
+        // Initial form check
+        checkFormValidity();
+    </script>
+</body>
+</html>
