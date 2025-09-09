@@ -3,12 +3,22 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 import json
 import re
+import tempfile
+import os
+from datetime import datetime
+
+# Import your model and detector from the same directory
+
+
+
+
+# ==================== AUTHENTICATION VIEWS ====================
 
 # Home View (Main Landing Page)
 def home_view(request):
@@ -58,7 +68,7 @@ def login_view(request):
                 messages.success(request, f'Welcome back, {user.username}!')
                 
                 # Redirect to next page or dashboard
-                next_url = request.GET.get('next', 'dashboard')
+                next_url = request.GET.get('next', 'upload')  # Changed to upload as main page
                 return redirect(next_url)
             else:
                 messages.error(request, 'Your account has been disabled.')
@@ -71,7 +81,7 @@ def login_view(request):
 def register_view(request):
     """Handle user registration"""
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        return redirect('upload')  # Changed to upload
     
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
@@ -164,31 +174,26 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     """User dashboard - requires login"""
+    # Get user-specific statistics
+    user_reports = DetectionHistory.objects.filter(user=request.user) if hasattr(DetectionHistory, 'user') else DetectionHistory.objects.all()
+    total_documents = user_reports.count()
+    forged_documents = user_reports.filter(prediction='FORGED').count()
+    genuine_documents = user_reports.filter(prediction='GENUINE').count()
+    
     context = {
         'user': request.user,
-        'total_documents': 0,  # You can add actual counts here
-        'verified_documents': 0,
-        'pending_documents': 0,
+        'total_documents': total_documents,
+        'forged_documents': forged_documents,
+        'genuine_documents': genuine_documents,
+        'recent_reports': user_reports[:5],  # Last 5 reports
     }
     return render(request, 'dashboard.html', context)
 
-# Document Upload View (Protected)
-@login_required
-def document_upload_view(request):
-    """Handle document upload for verification"""
-    if request.method == 'POST':
-        # Handle file upload and verification logic here
-        uploaded_file = request.FILES.get('document')
-        if uploaded_file:
-            # Add your document processing logic here
-            messages.success(request, 'Document uploaded successfully! Verification in progress...')
-            return redirect('dashboard')
-        else:
-            messages.error(request, 'Please select a file to upload.')
-    
-    return render(request, 'upload.html')
 
-# User Profile View (Protected)
+# ==================== DOCUMENT DETECTION VIEWS ====================
+
+# ==================== ADDITIONAL USER VIEWS ====================
+
 @login_required
 def profile_view(request):
     """User profile management"""
@@ -207,17 +212,8 @@ def profile_view(request):
     
     return render(request, 'profile.html')
 
-# Reports View (Protected)
-@login_required
-def reports_view(request):
-    """Display user's document verification reports"""
-    # Add logic to fetch user's verification reports
-    context = {
-        'reports': [],  # Add actual reports from database
-    }
-    return render(request, 'reports.html', context)
 
-# AJAX Views for enhanced functionality
+# ==================== AJAX VIEWS ====================
 
 @csrf_exempt
 def check_username_availability(request):
@@ -263,7 +259,29 @@ def check_email_availability(request):
     
     return JsonResponse({'available': False, 'message': 'Invalid request'})
 
-# Password Reset Views (Basic implementation)
+
+# ==================== SUPPORT VIEWS ====================
+
+def help_view(request):
+    """Help and support page"""
+    return render(request, 'help.html')
+
+def contact_view(request):
+    """Contact page"""
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        message = request.POST.get('message', '').strip()
+        
+        if all([name, email, message]):
+            # Add contact form processing logic here
+            messages.success(request, 'Thank you for your message! We will get back to you soon.')
+            return redirect('contact')
+        else:
+            messages.error(request, 'Please fill in all fields.')
+    
+    return render(request, 'contact.html')
+
 def password_reset_request_view(request):
     """Handle password reset requests"""
     if request.method == 'POST':
@@ -281,29 +299,9 @@ def password_reset_request_view(request):
     
     return render(request, 'password_reset.html')
 
-# Help/Support View
-def help_view(request):
-    """Help and support page"""
-    return render(request, 'help.html')
 
-# Contact View
-def contact_view(request):
-    """Contact page"""
-    if request.method == 'POST':
-        name = request.POST.get('name', '').strip()
-        email = request.POST.get('email', '').strip()
-        message = request.POST.get('message', '').strip()
-        
-        if all([name, email, message]):
-            # Add contact form processing logic here
-            messages.success(request, 'Thank you for your message! We will get back to you soon.')
-            return redirect('contact')
-        else:
-            messages.error(request, 'Please fill in all fields.')
-    
-    return render(request, 'contact.html')
+# ==================== ERROR HANDLERS ====================
 
-# Error Views
 def handler404(request, exception):
     """Custom 404 error handler"""
     return render(request, '404.html', status=404)

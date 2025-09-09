@@ -1,0 +1,230 @@
+{% load static tailwind_tags %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Document Forgery Detection</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background-color: #f8f9fa;
+        }
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+            border-radius: 10px; 
+            margin-bottom: 30px;
+        }
+        .upload-section { 
+            background: white;
+            border: 2px dashed #ddd; 
+            padding: 40px; 
+            text-align: center; 
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group { margin: 20px 0; }
+        .form-control { 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 16px;
+            width: 200px;
+        }
+        .btn { 
+            background: #007bff; 
+            color: white; 
+            padding: 15px 30px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #0056b3; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #1e7e34; }
+        
+        .report-section { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            margin-top: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .report-header { 
+            background: #f8f9fa; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            border-left: 5px solid #007bff;
+        }
+        .analysis-result { 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 20px 0; 
+            text-align: center;
+        }
+        .forged { 
+            background: #f8d7da; 
+            border: 1px solid #f5c6cb; 
+            color: #721c24; 
+        }
+        .genuine { 
+            background: #d4edda; 
+            border: 1px solid #c3e6cb; 
+            color: #155724; 
+        }
+        .probabilities { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin: 15px 0; 
+        }
+        .prob-item { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 8px 0; 
+            border-bottom: 1px solid #eee; 
+        }
+        .text-section { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin: 15px 0; 
+            white-space: pre-wrap; 
+            font-family: monospace; 
+            max-height: 200px; 
+            overflow-y: auto; 
+        }
+        .error { 
+            background: #f8d7da; 
+            color: #721c24; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin: 20px 0; 
+        }
+        .nav-links { 
+            text-align: center; 
+            margin: 20px 0; 
+        }
+        .nav-links a { 
+            color: #007bff; 
+            text-decoration: none; 
+            margin: 0 15px; 
+            font-weight: bold; 
+        }
+        .nav-links a:hover { text-decoration: underline; }
+        .download-section { 
+            text-align: center; 
+            margin: 20px 0; 
+            padding: 15px; 
+            background: #e8f5e8; 
+            border-radius: 5px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ Document Forgery Detection System</h1>
+        <p>Upload a document image to detect potential forgery</p>
+    </div>
+    
+    <div class="nav-links">
+        <a href="{% url 'upload' %}">🏠 Home</a>
+        <a href="{% url 'reports' %}">📋 View Reports History</a>
+    </div>
+    
+    <div class="upload-section">
+        <h2>📤 Upload Document for Analysis</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="doc_type"><strong>Document Type:</strong></label><br>
+                <select name="doc_type" id="doc_type" class="form-control">
+                    <option value="Unknown">Unknown</option>
+                    <option value="Passport">Passport</option>
+                    <option value="ID Card">ID Card</option>
+                    <option value="License">License</option>
+                    <option value="Certificate">Certificate</option>
+                    <option value="Visa">Visa</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="document"><strong>Choose Image File:</strong></label><br>
+                <input type="file" name="document" id="document" accept="image/*" required style="margin: 10px;">
+            </div>
+            
+            <button type="submit" class="btn">🔍 Analyze Document</button>
+        </form>
+    </div>
+    
+    {% if error %}
+    <div class="error">
+        <strong>❌ Error:</strong> {{ error }}
+    </div>
+    {% endif %}
+    
+    {% if report %}
+    <div class="report-section">
+        <div class="report-header">
+            <h2>📊 Analysis Report</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div><strong>📄 File:</strong> {{ report.filename }}</div>
+                <div><strong>📋 Type:</strong> {{ report.doc_type }}</div>
+                <div><strong>⏰ Time:</strong> {{ report.timestamp }}</div>
+                <div><strong>⚡ Processing:</strong> {{ report.processing_time }}</div>
+            </div>
+        </div>
+        
+        <div class="analysis-result {% if report.prediction == 'FORGED' %}forged{% else %}genuine{% endif %}">
+            <h3>🎯 Detection Result</h3>
+            <div style="font-size: 24px; font-weight: bold; margin: 15px 0;">
+                {{ report.prediction }}
+            </div>
+            <div style="font-size: 18px;">
+                Confidence: {{ report.confidence }}
+            </div>
+        </div>
+        
+        <div class="download-section">
+            <a href="{% url 'download_report' report.detection_id %}" class="btn btn-success">
+                💾 Download Full Report
+            </a>
+        </div>
+        
+        <div class="probabilities">
+            <h4>📈 Class Probabilities</h4>
+            {% for class_name, probability in report.probabilities.items %}
+            <div class="prob-item">
+                <span><strong>{{ class_name }}:</strong></span>
+                <span>{{ probability|floatformat:2 }}%</span>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if report.extracted_text and "no text" not in report.extracted_text|lower %}
+        <div>
+            <h4>📝 Extracted Text (Original)</h4>
+            <div class="text-section">{{ report.extracted_text }}</div>
+        </div>
+        {% endif %}
+        
+        {% if report.translated_text and "translation" not in report.translated_text|lower %}
+        <div>
+            <h4>🌐 Translated Text (English)</h4>
+            <div class="text-section">{{ report.translated_text }}</div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</body>
+</html>
