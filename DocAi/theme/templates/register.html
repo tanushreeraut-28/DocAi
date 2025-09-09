@@ -88,6 +88,37 @@
         .strength-medium { background-color: #f59e0b; width: 50%; }
         .strength-good { background-color: #10b981; width: 75%; }
         .strength-strong { background-color: #059669; width: 100%; }
+
+        .error-input {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .success-input {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+        }
+
+        .message-error {
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .message-success {
+            background-color: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .availability-message {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .available { color: #10b981; }
+        .unavailable { color: #ef4444; }
     </style>
 </head>
 
@@ -96,7 +127,7 @@
     <nav class="glass-effect shadow-elegant">
         <div class="container mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center py-3">
-                <a href="/" class="flex items-center">
+                <a href="{% url 'home' %}" class="flex items-center">
                     <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl mr-2 sm:mr-3 flex items-center justify-center shadow-elegant gradient-primary">
                         <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10.5,11.5C10.5,12.3 11.2,13 12,13C12.8,13 13.5,12.3 13.5,11.5S12.8,10 12,10S10.5,10.7 10.5,11.5M12,15C10.3,15 9,16.3 9,18H15C15,16.3 13.7,15 12,15Z"/>
@@ -106,7 +137,7 @@
                 </a>
                 
                 <div class="flex items-center">
-                    <a href="login.html" class="px-3 sm:px-4 py-2 rounded-xl font-medium btn-secondary text-sm">
+                    <a href="{% url 'login' %}" class="px-3 sm:px-4 py-2 rounded-xl font-medium btn-secondary text-sm">
                         Sign In
                     </a>
                 </div>
@@ -130,8 +161,26 @@
                 <p class="mt-2 text-base text-gray-600">Join thousands securing their documents</p>
             </div>
 
+            <!-- Django Messages -->
+            {% if messages %}
+                <div class="space-y-2">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-xl message-error">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                </svg>
+                                {{ message }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             <!-- Registration Form -->
-            <form class="bg-white p-6 sm:p-7 rounded-3xl shadow-elegant" id="registerForm">
+            <form method="post" class="bg-white p-6 sm:p-7 rounded-3xl shadow-elegant" id="registerForm" novalidate>
+                {% csrf_token %}
+                
                 <div class="space-y-4">
                     <div>
                         <label for="username" class="block text-sm font-semibold mb-2" style="color: var(--color-text-primary);">
@@ -144,8 +193,10 @@
                             required 
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none input-focus transition duration-300"
                             placeholder="Choose a unique username"
+                            value="{{ request.POST.username|default:'' }}"
                         >
-                        <p class="mt-1 text-xs text-gray-500">Your unique identifier</p>
+                        <div id="usernameMessage" class="availability-message hidden"></div>
+                        <p class="mt-1 text-xs text-gray-500">3-30 characters, letters, numbers, and underscores only</p>
                     </div>
                     
                     <div>
@@ -159,7 +210,9 @@
                             required 
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none input-focus transition duration-300"
                             placeholder="Enter your email address"
+                            value="{{ request.POST.email|default:'' }}"
                         >
+                        <div id="emailMessage" class="availability-message hidden"></div>
                     </div>
                     
                     <div>
@@ -177,7 +230,7 @@
                         <!-- Password Strength Indicator -->
                         <div class="mt-2">
                             <div class="flex justify-between text-xs mb-1">
-                                <span class="text-gray-500">Strength</span>
+                                <span class="text-gray-500">Password Strength</span>
                                 <span id="strengthText" class="text-gray-500">Weak</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-1">
@@ -214,10 +267,11 @@
                         required
                         class="h-4 w-4 mt-0.5 rounded focus:ring-2 focus:ring-green-500"
                         style="color: var(--color-secondary);"
+                        {% if request.POST.terms %}checked{% endif %}
                     >
                     <label for="terms" class="ml-2 block text-xs text-gray-700 leading-4">
                         I agree to the 
-                        <a href="#" class="font-medium hover:underline" style="color: var(--color-secondary);">Terms</a> 
+                        <a href="#" class="font-medium hover:underline" style="color: var(--color-secondary);">Terms of Service</a> 
                         and 
                         <a href="#" class="font-medium hover:underline" style="color: var(--color-secondary);">Privacy Policy</a>
                     </label>
@@ -231,6 +285,7 @@
                         type="checkbox" 
                         class="h-4 w-4 mt-0.5 rounded focus:ring-2 focus:ring-green-500"
                         style="color: var(--color-secondary);"
+                        {% if request.POST.newsletter %}checked{% endif %}
                     >
                     <label for="newsletter" class="ml-2 block text-xs text-gray-700 leading-4">
                         Subscribe for updates and security tips
@@ -287,7 +342,7 @@
                 <div class="text-center">
                     <p class="text-gray-600 text-sm">
                         Already have an account? 
-                        <a href="login.html" class="font-semibold hover:underline" style="color: var(--color-secondary);">
+                        <a href="{% url 'login' %}" class="font-semibold hover:underline" style="color: var(--color-secondary);">
                             Sign in here
                         </a>
                     </p>
@@ -305,6 +360,8 @@
         const passwordMatch = document.getElementById('passwordMatch');
         const submitBtn = document.getElementById('submitBtn');
         const termsCheckbox = document.getElementById('terms');
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
 
         // Password strength checker
         function checkPasswordStrength(password) {
@@ -358,13 +415,17 @@
             if (confirmPassword.value && password.value !== confirmPassword.value) {
                 passwordMatch.classList.remove('hidden');
                 passwordMatch.innerHTML = '<span class="text-red-500">❌ Passwords don\'t match</span>';
+                confirmPassword.classList.add('error-input');
                 return false;
             } else if (confirmPassword.value && password.value === confirmPassword.value) {
                 passwordMatch.classList.remove('hidden');
                 passwordMatch.innerHTML = '<span class="text-green-500">✅ Passwords match</span>';
+                confirmPassword.classList.remove('error-input');
+                confirmPassword.classList.add('success-input');
                 return true;
             } else {
                 passwordMatch.classList.add('hidden');
+                confirmPassword.classList.remove('error-input', 'success-input');
                 return false;
             }
         }
@@ -372,21 +433,103 @@
         confirmPassword.addEventListener('input', checkPasswordMatch);
         password.addEventListener('input', checkPasswordMatch);
 
+        // Username availability check
+        let usernameTimeout;
+        usernameInput.addEventListener('input', function() {
+            clearTimeout(usernameTimeout);
+            const username = this.value.trim();
+            const messageDiv = document.getElementById('usernameMessage');
+            
+            if (username.length >= 3) {
+                usernameTimeout = setTimeout(() => {
+                    fetch('{% url "check_username_availability" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ username: username })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        messageDiv.classList.remove('hidden');
+                        if (data.available) {
+                            messageDiv.textContent = data.message;
+                            messageDiv.className = 'availability-message available';
+                            usernameInput.classList.remove('error-input');
+                            usernameInput.classList.add('success-input');
+                        } else {
+                            messageDiv.textContent = data.message;
+                            messageDiv.className = 'availability-message unavailable';
+                            usernameInput.classList.remove('success-input');
+                            usernameInput.classList.add('error-input');
+                        }
+                        checkFormValidity();
+                    });
+                }, 500);
+            } else {
+                messageDiv.classList.add('hidden');
+                usernameInput.classList.remove('error-input', 'success-input');
+            }
+        });
+
+        // Email availability check
+        let emailTimeout;
+        emailInput.addEventListener('input', function() {
+            clearTimeout(emailTimeout);
+            const email = this.value.trim();
+            const messageDiv = document.getElementById('emailMessage');
+            
+            if (email.includes('@')) {
+                emailTimeout = setTimeout(() => {
+                    fetch('{% url "check_email_availability" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ email: email })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        messageDiv.classList.remove('hidden');
+                        if (data.available) {
+                            messageDiv.textContent = data.message;
+                            messageDiv.className = 'availability-message available';
+                            emailInput.classList.remove('error-input');
+                            emailInput.classList.add('success-input');
+                        } else {
+                            messageDiv.textContent = data.message;
+                            messageDiv.className = 'availability-message unavailable';
+                            emailInput.classList.remove('success-input');
+                            emailInput.classList.add('error-input');
+                        }
+                        checkFormValidity();
+                    });
+                }, 500);
+            } else {
+                messageDiv.classList.add('hidden');
+                emailInput.classList.remove('error-input', 'success-input');
+            }
+        });
+
         // Check form validity
         function checkFormValidity() {
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
+            const username = usernameInput.value.trim();
+            const email = emailInput.value.trim();
             const passwordValue = password.value;
             const confirmPasswordValue = confirmPassword.value;
             const termsAccepted = termsCheckbox.checked;
 
-            const isValid = username && 
-                           email && 
-                           passwordValue && 
+            const isValid = username.length >= 3 && 
+                           email.includes('@') && 
+                           passwordValue.length >= 8 && 
                            confirmPasswordValue && 
                            passwordValue === confirmPasswordValue &&
                            checkPasswordStrength(passwordValue).score >= 3 &&
-                           termsAccepted;
+                           termsAccepted &&
+                           !usernameInput.classList.contains('error-input') &&
+                           !emailInput.classList.contains('error-input');
 
             submitBtn.disabled = !isValid;
             
@@ -405,41 +548,23 @@
         });
         termsCheckbox.addEventListener('change', checkFormValidity);
 
-        // Form submission
+        // Form submission enhancement
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                username: document.getElementById('username').value,
-                email: document.getElementById('email').value,
-                password: password.value,
-                newsletter: document.getElementById('newsletter').checked
-            };
-            
-            if (!submitBtn.disabled) {
-                // Here you would normally send the data to your backend
-                alert('Account created successfully! Welcome to DocVerify!');
-                // window.location.href = '/dashboard';
+            if (submitBtn.disabled) {
+                e.preventDefault();
+                return;
             }
+            
+            // Show loading state
+            submitBtn.innerHTML = '⏳ Creating Account...';
+            submitBtn.disabled = true;
         });
 
         // Social registration handlers
         document.querySelectorAll('button[type="button"]').forEach(button => {
             button.addEventListener('click', function() {
                 const provider = this.textContent.trim();
-                alert(`${provider} registration would be implemented here!`);
-            });
-        });
-
-        // Real-time validation styling
-        const inputs = document.querySelectorAll('input[required]');
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                if (this.value.trim() === '') {
-                    this.style.borderColor = '#ef4444';
-                } else {
-                    this.style.borderColor = '#d1d5db';
-                }
+                alert(`${provider} registration coming soon!`);
             });
         });
 

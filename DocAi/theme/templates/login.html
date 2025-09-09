@@ -95,7 +95,7 @@
                 </a>
                 
                 <div class="flex items-center">
-                    <a href="register.html" class="px-3 sm:px-4 py-2 rounded-xl font-medium btn-secondary text-sm">
+                    <a href="{% url "register" %}" class="px-3 sm:px-4 py-2 rounded-xl font-medium btn-secondary text-sm">
                         Create Account
                     </a>
                 </div>
@@ -220,7 +220,7 @@
                 <div class="text-center">
                     <p class="text-gray-600 text-sm">
                         Don't have an account? 
-                        <a href="register.html" class="font-semibold hover:underline" style="color: var(--color-secondary);">
+                        <a href="{% url "register" %}" class="font-semibold hover:underline" style="color: var(--color-secondary);">
                             Create one now
                         </a>
                     </p>
@@ -230,41 +230,38 @@
     </div>
 
     <script>
-        // Form submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            if (email && password) {
-                // Here you would normally send the data to your backend
-                alert('Login successful! Redirecting to dashboard...');
-                // window.location.href = '/dashboard';
+    // Form submission
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        
+        if (!email || !password) {
+            e.preventDefault();  // Only prevent submission if fields are empty
+            alert('Please fill in all fields.');
+        }
+        // Otherwise, let the form submit normally to Django
+    });
+
+    // Social login handlers
+    document.querySelectorAll('button[type="button"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const provider = this.textContent.trim();
+            alert(`${provider} login would be implemented here!`);
+        });
+    });
+
+    // Real-time validation
+    const inputs = document.querySelectorAll('input[required]');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value.trim() === '') {
+                this.style.borderColor = '#ef4444';
             } else {
-                alert('Please fill in all fields.');
+                this.style.borderColor = '#d1d5db';
             }
         });
+    });
+</script>
 
-        // Social login handlers
-        document.querySelectorAll('button[type="button"]').forEach(button => {
-            button.addEventListener('click', function() {
-                const provider = this.textContent.trim();
-                alert(`${provider} login would be implemented here!`);
-            });
-        });
-
-        // Real-time validation
-        const inputs = document.querySelectorAll('input[required]');
-        inputs.forEach(input => {
-            input.addEventListener('blur', function() {
-                if (this.value.trim() === '') {
-                    this.style.borderColor = '#ef4444';
-                } else {
-                    this.style.borderColor = '#d1d5db';
-                }
-            });
-        });
-    </script>
 </body>
 </html>

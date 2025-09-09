@@ -1,5 +1,1 @@
-{
-  "0": "positive", 
-  "1": "fraud5_inpaint_and_rewrite",
-  "2": "fraud6_crop_and_replace"
-}
+{"0": "fraud5_inpaint_and_rewrite", "1": "fraud6_crop_and_replace", "2": "positive"}

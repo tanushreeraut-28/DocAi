@@ -23,8 +23,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.home_view,name='home'),
     path('login/',views.login_view,name='login'),
-    path('register/',views.register_view,name='regsiter'),
-     path("detection/", include("detection.urls")), 
+    path('register/',views.register_view,name='register'),
+     path("detection/", include("detection.urls")),path('check-username/', views.check_username_availability, name='check_username_availability'),
+    path('check-email/', views.check_email_availability, name='check_email_availability'),
+
+    path('profile/', views.profile_view, name='profile'),
+    path('help/', views.help_view, name='help'),
+    path('contact/', views.contact_view, name='contact'),
+    path('password-reset/', views.password_reset_request_view, name='password_reset'), 
     
 
 ]
