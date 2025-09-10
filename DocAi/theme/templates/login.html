@@ -85,7 +85,7 @@
     <nav class="glass-effect shadow-elegant">
         <div class="container mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center py-3">
-                <a href="/" class="flex items-center">
+                <a href="{% url 'home' %}" class="flex items-center">
                     <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl mr-2 sm:mr-3 flex items-center justify-center shadow-elegant gradient-primary">
                         <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10.5,11.5C10.5,12.3 11.2,13 12,13C12.8,13 13.5,12.3 13.5,11.5S12.8,10 12,10S10.5,10.7 10.5,11.5M12,15C10.3,15 9,16.3 9,18H15C15,16.3 13.7,15 12,15Z"/>
@@ -95,7 +95,7 @@
                 </a>
                 
                 <div class="flex items-center">
-                    <a href="{% url "register" %}" class="px-3 sm:px-4 py-2 rounded-xl font-medium btn-secondary text-sm">
+                    <a href="{% url 'register' %}" class="px-3 sm:px-4 py-2 rounded-xl font-medium btn-secondary text-sm">
                         Create Account
                     </a>
                 </div>
@@ -119,8 +119,35 @@
                 <p class="mt-2 text-base text-gray-600">Sign in to your DocVerify account</p>
             </div>
 
+            <!-- Messages Display -->
+            {% if messages %}
+                <div class="max-w-md w-full">
+                    {% for message in messages %}
+                        <div class="mb-4 p-4 rounded-xl {% if message.tags == 'error' %}bg-red-100 border-red-500 text-red-700{% elif message.tags == 'success' %}bg-green-100 border-green-500 text-green-700{% else %}bg-blue-100 border-blue-500 text-blue-700{% endif %} border-l-4 shadow-elegant">
+                            <div class="flex items-center">
+                                {% if message.tags == 'error' %}
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,7A1,1 0 0,1 13,8V12A1,1 0 0,1 12,13A1,1 0 0,1 11,12V8A1,1 0 0,1 12,7M12,17A1,1 0 0,1 11,16A1,1 0 0,1 12,15A1,1 0 0,1 13,16A1,1 0 0,1 12,17Z"/>
+                                    </svg>
+                                {% elif message.tags == 'success' %}
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M11,16.5L18,9.5L16.59,8.09L11,13.67L7.91,10.59L6.5,12L11,16.5Z"/>
+                                    </svg>
+                                {% else %}
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,7A1,1 0 0,0 11,8V12A1,1 0 0,0 12,13A1,1 0 0,0 13,12V8A1,1 0 0,0 12,7M12,17A1,1 0 0,0 11,16A1,1 0 0,0 12,15A1,1 0 0,0 13,16A1,1 0 0,0 12,17Z"/>
+                                    </svg>
+                                {% endif %}
+                                <span class="font-medium">{{ message }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             <!-- Login Form -->
-            <form class="bg-white p-6 sm:p-8 rounded-3xl shadow-elegant" id="loginForm">
+            <form method="POST" action="{% url 'login' %}" class="bg-white p-6 sm:p-8 rounded-3xl shadow-elegant" id="loginForm">
+                {% csrf_token %}
                 <div class="space-y-4">
                     <div>
                         <label for="email" class="block text-sm font-semibold mb-2" style="color: var(--color-text-primary);">
@@ -131,6 +158,7 @@
                             name="email" 
                             type="email" 
                             required 
+                            value="{{ request.POST.email|default:'' }}"
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none input-focus transition duration-300"
                             placeholder="Enter your email address"
                         >
@@ -166,7 +194,7 @@
                     </div>
 
                     <div class="text-sm">
-                        <a href="#" class="font-medium hover:underline" style="color: var(--color-secondary);">
+                        <a href="{% url 'password_reset_request' %}" class="font-medium hover:underline" style="color: var(--color-secondary);">
                             Forgot password?
                         </a>
                     </div>
@@ -175,6 +203,7 @@
                 <div class="mb-6">
                     <button 
                         type="submit" 
+                        id="submitButton"
                         class="w-full py-3 px-4 rounded-xl font-semibold btn-primary transform hover:scale-105 transition duration-300"
                     >
                         🔐 Sign In to DocVerify
@@ -220,7 +249,7 @@
                 <div class="text-center">
                     <p class="text-gray-600 text-sm">
                         Don't have an account? 
-                        <a href="{% url "register" %}" class="font-semibold hover:underline" style="color: var(--color-secondary);">
+                        <a href="{% url 'register' %}" class="font-semibold hover:underline" style="color: var(--color-secondary);">
                             Create one now
                         </a>
                     </p>
@@ -230,16 +259,25 @@
     </div>
 
     <script>
-    // Form submission
+    // Form submission with loading state
     document.getElementById('loginForm').addEventListener('submit', function(e) {
+        const submitButton = document.getElementById('submitButton');
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value.trim();
         
+        // Basic client-side validation
         if (!email || !password) {
-            e.preventDefault();  // Only prevent submission if fields are empty
+            e.preventDefault();
             alert('Please fill in all fields.');
+            return;
         }
-        // Otherwise, let the form submit normally to Django
+        
+        // Show loading state
+        submitButton.innerHTML = '🔄 Signing in...';
+        submitButton.disabled = true;
+        submitButton.style.opacity = '0.7';
+        
+        // Let the form submit normally to Django
     });
 
     // Social login handlers
@@ -250,18 +288,34 @@
         });
     });
 
-    // Real-time validation
+    // Real-time validation with better UX
     const inputs = document.querySelectorAll('input[required]');
     inputs.forEach(input => {
         input.addEventListener('blur', function() {
             if (this.value.trim() === '') {
                 this.style.borderColor = '#ef4444';
+                this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
             } else {
                 this.style.borderColor = '#d1d5db';
+                this.style.boxShadow = 'none';
+            }
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.style.borderColor === 'rgb(239, 68, 68)' && this.value.trim() !== '') {
+                this.style.borderColor = '#d1d5db';
+                this.style.boxShadow = 'none';
             }
         });
     });
-</script>
 
+    // Reset button state if form validation fails
+    window.addEventListener('pageshow', function() {
+        const submitButton = document.getElementById('submitButton');
+        submitButton.innerHTML = '🔐 Sign In to DocVerify';
+        submitButton.disabled = false;
+        submitButton.style.opacity = '1';
+    });
+    </script>
 </body>
 </html>
