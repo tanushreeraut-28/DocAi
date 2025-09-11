@@ -26,7 +26,7 @@ urlpatterns = [
     path('register/',views.register_view,name='register'),
      path("detection/", include("detection.urls")),path('check-username/', views.check_username_availability, name='check_username_availability'),
     path('check-email/', views.check_email_availability, name='check_email_availability'),
-
+    path('logout',views.logout_view , name='logout'),
     path('profile/', views.profile_view, name='profile'),
     path('help/', views.help_view, name='help'),
     path('contact/', views.contact_view, name='contact'),
