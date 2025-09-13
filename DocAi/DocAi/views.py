@@ -180,10 +180,11 @@ def profile_view(request):
 
 # ==================== AJAX VIEWS ====================
 
-@csrf_exempt
+# It's better to handle CSRF tokens on the frontend than to exempt views.
+# @csrf_exempt
 def check_username_availability(request):
     """AJAX endpoint to check username availability"""
-    if request.method == 'POST':
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = json.loads(request.body)
         username = data.get('username', '').strip()
 
@@ -195,13 +196,13 @@ def check_username_availability(request):
 
         return JsonResponse({'available': is_available, 'message': message})
 
-    return JsonResponse({'available': False, 'message': 'Invalid request'})
+    return JsonResponse({'available': False, 'message': 'Invalid request method.'}, status=405)
 
 
-@csrf_exempt
+# @csrf_exempt
 def check_email_availability(request):
     """AJAX endpoint to check email availability"""
-    if request.method == 'POST':
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         data = json.loads(request.body)
         email = data.get('email', '').strip()
 
@@ -214,7 +215,7 @@ def check_email_availability(request):
         except ValidationError:
             return JsonResponse({'available': False, 'message': 'Invalid email format'})
 
-    return JsonResponse({'available': False, 'message': 'Invalid request'})
+    return JsonResponse({'available': False, 'message': 'Invalid request method.'}, status=405)
 
 
 # ==================== SUPPORT VIEWS ====================
@@ -252,6 +253,16 @@ def password_reset_request_view(request):
             messages.error(request, 'Please enter a valid email address.')
 
     return render(request, 'password_reset.html')
+
+
+def verify_view(request):
+    """Placeholder view for the Verify page."""
+    return render(request, 'verify.html')
+
+
+def reports_view(request):
+    """Placeholder view for the Reports page."""
+    return render(request, 'reports.html')
 
 
 # ==================== ERROR HANDLERS ====================

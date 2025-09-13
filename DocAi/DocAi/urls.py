@@ -31,20 +31,7 @@ urlpatterns = [
     path('help/', views.help_view, name='help'),
     path('contact/', views.contact_view, name='contact'),
     path('password-reset/', views.password_reset_request_view, name='password_reset'), 
-    path('features/', views.FeaturesView.as_view(), name='features'),
     
-    # Alternative function-based view
-    # path('features/', views.features_view, name='features'),
-    
-    # Feature-related endpoints
-    path('features/demo-request/', views.demo_request, name='demo_request'),
-    path('features/comparison/', views.feature_comparison, name='feature_comparison'),
-    path('features/api-docs/', views.feature_api_docs, name='api_docs'),
-    
-    # AJAX endpoints
-    path('ajax/feature-details/', views.AjaxFeatureView.as_view(), name='ajax_feature_details'),
-    path('ajax/track-interaction/', views.track_feature_interaction, name='track_interaction'),
-     path('help/', views.help_view, name='help'),
 
 ]
 if settings.DEBUG:
