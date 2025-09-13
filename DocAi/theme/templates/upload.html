@@ -559,7 +559,7 @@
                         <a href="{% url "upload" %}" class="font-medium hover:opacity-70 transition duration-300 text-lg font-bold" style="color: var(--color-secondary);">Verify</a>
                         <a href="{% url "reports" %}" class="font-medium hover:opacity-70 transition duration-300 text-lg" style="color: var(--color-text-primary);">Reports</a>
                     {% endif %}
-                    <a href="#features" class="font-medium hover:opacity-70 transition duration-300 text-lg" style="color: var(--color-text-primary);">Features</a>
+                    <a href="{% url "features" %}" class="font-medium hover:opacity-70 transition duration-300 text-lg" style="color: var(--color-text-primary);">Features</a>
                     <a href="{% url 'help' %}" class="font-medium hover:opacity-70 transition duration-300 text-lg" style="color: var(--color-text-primary);">Help</a>
                 </div>
                 
@@ -653,7 +653,7 @@
                     <a href="{% url "reports" %}" class="text-white text-lg font-medium hover:opacity-80 transition">Reports</a>
                     <a href="{% url 'profile' %}" class="text-white text-lg font-medium hover:opacity-80 transition">Profile</a>
                 {% endif %}
-                <a href="#features" class="text-white text-lg font-medium hover:opacity-80 transition">Features</a>
+                <a href="{% url "features" %}" class="text-white text-lg font-medium hover:opacity-80 transition">Features</a>
                 <a href="{% url 'help' %}" class="text-white text-lg font-medium hover:opacity-80 transition">Help</a>
                 
                 <!-- Auth Section -->

@@ -1,0 +1,585 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Help & Support - DocVerify</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% tailwind_css %}
+    <style>
+        :root {
+            --color-primary: #1B5E20;
+            --color-secondary: #2E7D32;
+            --color-tertiary: #388E3C;
+            --color-light: #4CAF50;
+            --color-accent: #66BB6A;
+            --color-bg-main: #F1F8E9;
+            --color-bg-secondary: #E8F5E8;
+            --color-text-primary: #1B5E20;
+            --color-text-secondary: #2E7D32;
+            --color-card-1: #E3F2FD;
+            --color-card-2: #FFF8E1;
+            --color-card-3: #F3E5F5;
+            --color-gold: #FF8F00;
+            --color-white: #FFFFFF;
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 50%, var(--color-tertiary) 100%);
+        }
+        
+        .gradient-light {
+            background: linear-gradient(135deg, var(--color-bg-main) 0%, var(--color-bg-secondary) 100%);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--color-secondary), var(--color-tertiary));
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--color-tertiary), var(--color-light));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+        }
+        
+        .btn-secondary {
+            border: 2px solid var(--color-secondary);
+            color: var(--color-secondary);
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--color-secondary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+        }
+        
+        .shadow-elegant {
+            box-shadow: 0 10px 40px rgba(27, 94, 32, 0.12);
+        }
+        
+        .nav-glass {
+            backdrop-filter: blur(25px);
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(27, 94, 32, 0.1);
+        }
+        
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        
+        .user-dropdown {
+            transform: translateY(-10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .user-dropdown.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-answer.active {
+            max-height: 500px;
+            padding: 1rem 0;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(45deg, var(--color-secondary), var(--color-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body style="background-color: var(--color-bg-main);">
+
+    <!-- Navigation Bar -->
+    <nav class="fixed w-full top-0 z-50 nav-glass shadow-elegant">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="{% url 'home' %}" class="flex items-center">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl mr-3 sm:mr-4 flex items-center justify-center shadow-elegant gradient-primary">
+                            <svg class="w-5 h-5 sm:w-7 sm:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10.5,11.5C10.5,12.3 11.2,13 12,13C12.8,13 13.5,12.3 13.5,11.5S12.8,10 12,10S10.5,10.7 10.5,11.5M12,15C10.3,15 9,16.3 9,18H15C15,16.3 13.7,15 12,15Z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-bold text-2xl sm:text-3xl" style="color: var(--color-text-primary);">DocVerify</span>
+                            <span class="ml-2 text-xs font-bold px-2 py-1 rounded-full bg-white shadow-sm" style="color: var(--color-secondary); border: 1px solid var(--color-accent);">PRO</span>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="hidden lg:flex items-center space-x-6 xl:space-x-8">
+                    <a href="{% url 'home' %}" class="font-medium hover:opacity-70 transition duration-300 text-lg" style="color: var(--color-text-primary);">Home</a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url "upload" %}" class="font-medium hover:opacity-70 transition duration-300 text-lg" style="color: var(--color-text-primary);">Verify</a>
+                        <a href="{% url "reports" %}" class="font-medium hover:opacity-70 transition duration-300 text-lg" style="color: var(--color-text-primary);">Reports</a>
+                    {% endif %}
+                    <a href="{% url "features" %}" class="font-medium hover:opacity-70 transition duration-300 text-lg" style="color: var(--color-text-primary);">Features</a>
+                    <a href="/help/" class="font-medium hover:opacity-70 transition duration-300 text-lg border-b-2 border-green-500" style="color: var(--color-text-primary);">Help</a>
+                </div>
+                
+                <!-- Desktop Auth Section -->
+                <div class="hidden md:flex items-center space-x-3 lg:space-x-4">
+                    {% if user.is_authenticated %}
+                        <!-- User Profile Dropdown -->
+                        <div class="relative">
+                            <button id="userMenuBtn" class="flex items-center space-x-2 px-4 py-2 rounded-xl hover:bg-gray-100 transition duration-300">
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold" style="background: var(--color-secondary);">
+                                    {{ user.username|first|upper }}
+                                </div>
+                                <span class="font-medium" style="color: var(--color-text-primary);">{{ user.username }}</span>
+                                <svg class="w-4 h-4" style="color: var(--color-text-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            
+                            <!-- Dropdown Menu -->
+                            <div id="userDropdown" class="user-dropdown absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-elegant border border-gray-100">
+                                <div class="py-2">
+                                    <div class="px-4 py-3 border-b border-gray-100">
+                                        <p class="text-sm font-medium" style="color: var(--color-text-primary);">{{ user.get_full_name|default:user.username }}</p>
+                                        <p class="text-xs text-gray-500">{{ user.email }}</p>
+                                    </div>
+                                    <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm hover:bg-gray-50 transition duration-200" style="color: var(--color-text-primary);">Profile</a>
+                                    <div class="border-t border-gray-100 mt-2">
+                                        <a href="{% url "logout" %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition duration-200">Sign Out</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="px-4 lg:px-6 py-2 lg:py-3 rounded-xl font-medium btn-secondary text-sm lg:text-base">Sign In</a>
+                        <a href="{% url 'register' %}" class="px-4 lg:px-6 py-2 lg:py-3 rounded-xl font-medium btn-primary text-sm lg:text-base">Get Started</a>
+                    {% endif %}
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden flex items-center p-2" style="color: var(--color-text-primary);">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 w-80 h-full z-40 gradient-primary">
+        <div class="p-6 pt-20">
+            <div class="flex flex-col space-y-6">
+                {% if user.is_authenticated %}
+                    <div class="flex items-center space-x-3 pb-6 border-b border-white border-opacity-20">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg" style="background: rgba(255,255,255,0.2);">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <div>
+                            <p class="text-white font-semibold">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-gray-200 text-sm">{{ user.email }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                <a href="{% url 'home' %}" class="text-white text-lg font-medium hover:opacity-80 transition">Home</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url "upload" %}" class="text-white text-lg font-medium hover:opacity-80 transition">Verify</a>
+                    <a href="{% url "reports" %}" class="text-white text-lg font-medium hover:opacity-80 transition">Reports</a>
+                    <a href="{% url 'profile' %}" class="text-white text-lg font-medium hover:opacity-80 transition">Profile</a>
+                {% endif %}
+                <a href="{% url "features" %}" class="text-white text-lg font-medium hover:opacity-80 transition">Features</a>
+                <a href="/help/" class="text-white text-lg font-medium hover:opacity-80 transition border-b border-white pb-2">Help</a>
+                
+                <div class="pt-6 border-t border-white border-opacity-20">
+                    {% if user.is_authenticated %}
+                        <a href="{% url "logout" %}" class="w-full mb-3 px-6 py-3 bg-red-500 text-white rounded-xl font-medium block text-center hover:bg-red-600 transition">Sign Out</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="w-full mb-3 px-6 py-3 bg-white text-green-800 rounded-xl font-medium block text-center hover:bg-gray-100 transition">Sign In</a>
+                        <a href="{% url 'register' %}" class="w-full px-6 py-3 border-2 border-white text-white rounded-xl font-medium block text-center hover:bg-white hover:bg-opacity-10 transition">Get Started</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="mobileOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+
+    <!-- Help Hero Section -->
+    <section class="gradient-light pt-32 pb-16">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12">
+                <div class="mb-8">
+                    <span class="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold shadow-elegant" style="background-color: var(--color-card-1); color: var(--color-text-secondary);">
+                        🆘 Help & Support
+                    </span>
+                </div>
+                <h1 class="text-4xl lg:text-5xl font-bold mb-6 leading-tight" style="color: var(--color-text-primary);">
+                    How Can We
+                    <span class="gradient-text">Help You?</span>
+                </h1>
+                <p class="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+                    Find answers to common questions about DocVerify's document verification and OCR features, 
+                    or get in touch with our support team.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 max-w-4xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4" style="color: var(--color-text-primary);">
+                    Frequently Asked Questions
+                </h2>
+                <p class="text-lg text-gray-600">
+                    Common questions about our document verification service
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item bg-white rounded-lg shadow-elegant overflow-hidden">
+                    <div class="faq-question p-6 flex justify-between items-center" onclick="toggleFaq(1)">
+                        <h3 class="text-lg font-semibold" style="color: var(--color-text-primary);">What file formats does DocVerify support?</h3>
+                        <svg class="w-5 h-5 transform transition-transform duration-300" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div id="faq-1" class="faq-answer px-6">
+                        <p class="text-gray-600 pb-4">
+                            DocVerify supports common document formats including PDF, JPEG, PNG, and TIFF files. 
+                            We recommend using high-quality scans or images for the best verification and OCR results.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item bg-white rounded-lg shadow-elegant overflow-hidden">
+                    <div class="faq-question p-6 flex justify-between items-center" onclick="toggleFaq(2)">
+                        <h3 class="text-lg font-semibold" style="color: var(--color-text-primary);">How accurate is the document forgery detection?</h3>
+                        <svg class="w-5 h-5 transform transition-transform duration-300" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div id="faq-2" class="faq-answer px-6">
+                        <p class="text-gray-600 pb-4">
+                            Our machine learning models have been trained on extensive datasets and can detect various types of document manipulation 
+                            with high accuracy. However, results may vary depending on document quality and type of alterations.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item bg-white rounded-lg shadow-elegant overflow-hidden">
+                    <div class="faq-question p-6 flex justify-between items-center" onclick="toggleFaq(3)">
+                        <h3 class="text-lg font-semibold" style="color: var(--color-text-primary);">What languages does the OCR support?</h3>
+                        <svg class="w-5 h-5 transform transition-transform duration-300" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div id="faq-3" class="faq-answer px-6">
+                        <p class="text-gray-600 pb-4">
+                            Our OCR technology supports multiple languages including English, Spanish, French, German, and many others. 
+                            The system automatically detects the document language and extracts text accordingly.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item bg-white rounded-lg shadow-elegant overflow-hidden">
+                    <div class="faq-question p-6 flex justify-between items-center" onclick="toggleFaq(4)">
+                        <h3 class="text-lg font-semibold" style="color: var(--color-text-primary);">Is my document data secure?</h3>
+                        <svg class="w-5 h-5 transform transition-transform duration-300" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div id="faq-4" class="faq-answer px-6">
+                        <p class="text-gray-600 pb-4">
+                            Yes, we take data security seriously. All documents are processed using encrypted connections (HTTPS), 
+                            and files are automatically deleted from our servers after processing is complete.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item bg-white rounded-lg shadow-elegant overflow-hidden">
+                    <div class="faq-question p-6 flex justify-between items-center" onclick="toggleFaq(5)">
+                        <h3 class="text-lg font-semibold" style="color: var(--color-text-primary);">Can I process multiple documents at once?</h3>
+                        <svg class="w-5 h-5 transform transition-transform duration-300" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div id="faq-5" class="faq-answer px-6">
+                        <p class="text-gray-600 pb-4">
+                            Yes, DocVerify supports batch processing. You can upload multiple documents simultaneously, 
+                            and our system will process them efficiently and provide individual reports for each document.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 6 -->
+                <div class="faq-item bg-white rounded-lg shadow-elegant overflow-hidden">
+                    <div class="faq-question p-6 flex justify-between items-center" onclick="toggleFaq(6)">
+                        <h3 class="text-lg font-semibold" style="color: var(--color-text-primary);">How long does document processing take?</h3>
+                        <svg class="w-5 h-5 transform transition-transform duration-300" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div id="faq-6" class="faq-answer px-6">
+                        <p class="text-gray-600 pb-4">
+                            Most documents are processed within seconds. Processing time may vary depending on document size, 
+                            complexity, and current system load. You'll receive real-time updates during the analysis process.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 7 -->
+                <div class="faq-item bg-white rounded-lg shadow-elegant overflow-hidden">
+                    <div class="faq-question p-6 flex justify-between items-center" onclick="toggleFaq(7)">
+                        <h3 class="text-lg font-semibold" style="color: var(--color-text-primary);">Do you provide an API for integration?</h3>
+                        <svg class="w-5 h-5 transform transition-transform duration-300" style="color: var(--color-secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div id="faq-7" class="faq-answer px-6">
+                        <p class="text-gray-600 pb-4">
+                            Yes, we offer a RESTful API that allows you to integrate DocVerify's document verification and OCR capabilities 
+                            into your existing applications and workflows. Contact us for API documentation and access.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-16" style="background-color: var(--color-bg-secondary);">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="max-w-2xl mx-auto text-center">
+                <div class="mb-8">
+                    <div class="w-16 h-16 mx-auto rounded-full flex items-center justify-center shadow-elegant gradient-primary mb-6">
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl lg:text-4xl font-bold mb-4" style="color: var(--color-text-primary);">
+                        Still Need Help?
+                    </h2>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Can't find the answer you're looking for? Our support team is here to help you with any questions or issues.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-3xl p-8 shadow-elegant">
+                    <div class="flex items-center justify-center mb-6">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center mr-4" style="background-color: var(--color-card-1);">
+                            <svg class="w-6 h-6" style="color: var(--color-secondary);" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12,15C12.81,15 13.5,14.7 14.11,14.11C14.7,13.5 15,12.81 15,12C15,11.19 14.7,10.5 14.11,9.89C13.5,9.3 12.81,9 12,9C11.19,9 10.5,9.3 9.89,9.89C9.3,10.5 9,11.19 9,12C9,12.81 9.3,13.5 9.89,14.11C10.5,14.7 11.19,15 12,15M12,2C14.21,2 16.21,2.81 17.78,4.39C19.36,5.96 20.17,7.96 20.17,10.17C20.17,12.54 18.67,15.04 15.69,17.56C14.93,18.26 14.16,18.92 13.4,19.53C12.61,20.16 11.81,20.75 11,21.3C10.19,20.75 9.39,20.16 8.6,19.53C7.84,18.92 7.07,18.26 6.31,17.56C3.33,15.04 1.83,12.54 1.83,10.17C1.83,7.96 2.64,5.96 4.22,4.39C5.79,2.81 7.79,2 12,2Z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold" style="color: var(--color-text-primary);">Contact Support</h3>
+                            <p class="text-gray-600">Get personalized assistance from our team</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-center space-x-3">
+                            <svg class="w-5 h-5" style="color: var(--color-secondary);" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z"/>
+                            </svg>
+                            <a href="mailto:admin@contact.com" class="text-lg font-semibold hover:opacity-80 transition duration-300" style="color: var(--color-secondary);">
+                                admin@contact.com
+                            </a>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <p class="text-sm text-gray-600">
+                                📧 <strong>Email us directly</strong> for technical support, account issues, or general inquiries.
+                                We typically respond within 24 hours.
+                            </p>
+                        </div>
+                        
+                        <a href="mailto:admin@contact.com?subject=DocVerify Support Request&body=Hello DocVerify Support Team,%0D%0A%0D%0AI need assistance with:%0D%0A%0D%0A[Please describe your issue here]%0D%0A%0D%0AThank you!" 
+                           class="inline-block px-8 py-3 rounded-xl font-semibold btn-primary hover:transform hover:scale-105 transition duration-300">
+                            Send Email
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 gradient-primary text-white">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="md:col-span-1">
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 rounded-2xl mr-3 flex items-center justify-center shadow-elegant" style="background: linear-gradient(45deg, var(--color-light), var(--color-accent));">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10.5,11.5C10.5,12.3 11.2,13 12,13C12.8,13 13.5,12.3 13.5,11.5S12.8,10 12,10S10.5,10.7 10.5,11.5M12,15C10.3,15 9,16.3 9,18H15C15,16.3 13.7,15 12,15Z"/>
+                            </svg>
+                        </div>
+                        <span class="font-bold text-xl text-white">DocVerify</span>
+                    </div>
+                    <p class="text-gray-200 mb-6 leading-relaxed text-sm">
+                        ML-powered document verification and OCR text extraction for reliable document analysis.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-white mb-4">Product</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{% url "features" %}" class="text-gray-200 hover:text-white transition text-sm">Features</a></li>
+                        <li><a href="#" class="text-gray-200 hover:text-white transition text-sm">API</a></li>
+                        <li><a href="#" class="text-gray-200 hover:text-white transition text-sm">Pricing</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-white mb-4">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/help/" class="text-gray-200 hover:text-white transition text-sm">Help Center</a></li>
+                        <li><a href="mailto:admin@contact.com" class="text-gray-200 hover:text-white transition text-sm">Contact</a></li>
+                        <li><a href="#" class="text-gray-200 hover:text-white transition text-sm">Documentation</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold text-white mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-200 hover:text-white transition text-sm">About</a></li>
+                        <li><a href="#" class="text-gray-200 hover:text-white transition text-sm">Privacy</a></li>
+                        <li><a href="#" class="text-gray-200 hover:text-white transition text-sm">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t pt-6" style="border-color: rgba(255,255,255,0.2);">
+                <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+                    <div class="mb-4 md:mb-0">
+                        <p class="text-gray-200 text-sm">© 2025 DocVerify Technologies. All rights reserved.</p>
+                    </div>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-200 hover:text-white transition text-sm">Privacy Policy</a>
+                        <a href="#" class="text-gray-200 hover:text-white transition text-sm">Terms</a>
+                        <a href="mailto:admin@contact.com" class="text-gray-200 hover:text-white transition text-sm">Support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // FAQ Toggle Functionality
+        function toggleFaq(id) {
+            const answer = document.getElementById(`faq-${id}`);
+            const question = answer.previousElementSibling;
+            const icon = question.querySelector('svg');
+            
+            if (answer.classList.contains('active')) {
+                answer.classList.remove('active');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                // Close all other FAQs
+                document.querySelectorAll('.faq-answer').forEach(faq => {
+                    faq.classList.remove('active');
+                });
+                document.querySelectorAll('.faq-question svg').forEach(svg => {
+                    svg.style.transform = 'rotate(0deg)';
+                });
+                
+                // Open clicked FAQ
+                answer.classList.add('active');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('active');
+            mobileOverlay.classList.toggle('hidden');
+            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : 'auto';
+        }
+        
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('active');
+            mobileOverlay.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+        
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+        mobileOverlay.addEventListener('click', closeMobileMenu);
+        
+        // User dropdown functionality
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const userDropdown = document.getElementById('userDropdown');
+        
+        if (userMenuBtn && userDropdown) {
+            userMenuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userDropdown.classList.toggle('active');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.remove('active');
+                }
+            });
+        }
+
+        // Escape key functionality
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (mobileMenu && mobileMenu.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+                if (userDropdown && userDropdown.classList.contains('active')) {
+                    userDropdown.classList.remove('active');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
